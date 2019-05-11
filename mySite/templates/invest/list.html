@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>list</title>
+</head>
+<body>
+    <ul>
+        <li>제목 | 저자 | 날짜</li>
+        {% for stock in stockList %}
+            <li>
+            <a href="/invest/view/{{ stock.stc_id }}"> {{ stock.stc_name }}</a> | {{ stock.stc_dvsn }} | {{ stock.now_price }} |{{ stock.face_price }} |{{ stock.tot_value }} | {{ stock.cdate|date:"D d M Y" }}
+            </li>
+        {% endfor %}
+        <br>
+    </ul>
+
+</body>
+</html>
