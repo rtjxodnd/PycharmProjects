@@ -3,6 +3,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from polls.models import Choice, Question
+import logging
+
+# 로거
+logger = logging.getLogger(__name__)
 
 
 def index(request):
