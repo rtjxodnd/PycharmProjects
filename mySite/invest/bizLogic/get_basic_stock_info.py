@@ -15,6 +15,8 @@ from invest.models import Stc001
 import requests
 from bs4 import BeautifulSoup
 import logging
+import time
+from invest.bizLogic import myError
 
 # 로거
 logger = logging.getLogger(__name__)
@@ -96,23 +98,39 @@ def stock_values_delete(kospi_yn="N", kosdaq_yn="N"):
 # 입력된 dictionary 를 db insert
 # insert_value: 입력된 dictionary 형태의 종목정보
 def stock_values_insert_to_db(insert_value):
-
+    stc_id = insert_value['stcId']
+    stc_name = insert_value['stcNm']
+    stc_dvsn = insert_value['stcDvsn']
+    now_price = insert_value['nowPrice']
+    face_price = insert_value['facePrice']
+    tot_value = insert_value['totValue']
+    pgm_id = "STC0001"
     try:
-        stc_id       = insert_value['stcId']
-        stc_name     = insert_value['stcNm']
-        stc_dvsn     = insert_value['stcDvsn']
-        now_price    = insert_value['nowPrice']
-        face_price   = insert_value['facePrice']
-        tot_value    = insert_value['totValue']
-        pgm_id       = "STC0001"
-
-        Stc001(stc_id=stc_id,
-               stc_name=stc_name,
-               stc_dvsn=stc_dvsn,
-               now_price=now_price,
-               face_price=face_price,
-               tot_value=tot_value,
-               pgm_id=pgm_id).save()
+        insert_data = Stc001.objects.get(stc_id=stc_id)
+        insert_data.stc_name = stc_name
+        insert_data.stc_dvsn = stc_dvsn
+        insert_data.now_price = now_price
+        insert_data.face_price = face_price
+        insert_data.tot_value = tot_value
+        insert_data.pgm_id = pgm_id
+        insert_data.save()
+        return
+    except Stc001.DoesNotExist as de:
+        insert_data = Stc001(stc_id=stc_id,
+                             stc_name=stc_name,
+                             stc_dvsn=stc_dvsn,
+                             now_price=now_price,
+                             face_price=face_price,
+                             tot_value=tot_value,
+                             pgm_id=pgm_id)
+        # insert_data.stc_id = stc_id
+        # insert_data.stc_name = stc_name
+        # insert_data.stc_dvsn = stc_dvsn
+        # insert_data.now_price = now_price
+        # insert_data.face_price = face_price
+        # insert_data.tot_value = tot_value
+        # insert_data.pgm_id = pgm_id
+        insert_data.save()
         return
     except Exception as ex:
         error_result_dict = { "companyCode": insert_value['stcId']
@@ -129,14 +147,19 @@ def stock_values_insert_to_db(insert_value):
 ###########################################################
 def main_process(kospi_yn="N", kosdaq_yn="N"):
 
-    #기존 data삭제
-    stock_values_delete(kospi_yn, kosdaq_yn)
+    # 시간 check
+    cur_time = time.strftime("%H%M%S")
+    if cur_time < '090000':
+        raise myError.TimeCheckError
+
+    # 기존 data삭제
+    # stock_values_delete(kospi_yn, kosdaq_yn)
 
     if kospi_yn == "Y":
         # 코스피 전체 추출
         # 코스피(소속=0, 전체 페이지=31)
         sosok = 0
-        tot_pages = 1 + 31
+        tot_pages = 2 + 1
         for page in range(1, tot_pages):
             # 한페이지의 data 추출
             for stockOrder in range(0, 50):

@@ -3,20 +3,21 @@ from django.db import models
 
 # 주식기본
 class Stc001(models.Model):
-    stc_id = models.CharField(max_length=45)
+    stc_id = models.CharField(primary_key=True, max_length=45)
     stc_name = models.CharField(max_length=45)
     stc_dvsn = models.CharField(max_length=45)
     now_price = models.BigIntegerField(default=0)
     face_price = models.BigIntegerField(default=0)
     tot_value = models.BigIntegerField(default=0)
     pgm_id = models.CharField(max_length=10)
-    cdate = models.DateTimeField(auto_now_add=True)
+    cdate = models.DateTimeField(auto_now=True)
 
 
 # 주식일별내역
 class Stc002(models.Model):
-    base_dt = models.CharField(max_length=45)
-    stc_id = models.CharField(max_length=45)
+    base_dt = models.CharField(primary_key=True, max_length=45)
+    stc_id = models.ForeignKey(Stc001, on_delete=models.CASCADE, help_text='논리적외래키')
+    # models.CharField(max_length=45)
     mod_cls_price = models.BigIntegerField(default=0)
     cls_price = models.BigIntegerField(default=0)
     diff_price = models.BigIntegerField(default=0)
@@ -25,4 +26,4 @@ class Stc002(models.Model):
     low_price = models.BigIntegerField(default=0)
     deal_qnt = models.BigIntegerField(default=0)
     pgm_id = models.CharField(max_length=10)
-    cdate = models.DateTimeField(auto_now_add=True)
+    cdate = models.DateTimeField(auto_now=True)

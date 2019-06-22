@@ -187,7 +187,7 @@ def insert_daily_cls_price(stc_id, input_dt):
 ###########################################################
 # Main 처리: 주식 기본 테이블에서 data 읽어서 이를 처리한다.
 ###########################################################
-def main_process(input_dt = dt.now().strftime("%Y%m%d")):
+def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
     # 조회수행(입력된 일자보다 크거나 같으면서 Stc001에 종목정보가 있는 data)
     sql_select = "SELECT a.stc_id FROM rtjxodnd.stc001 a "\
                  "  LEFT JOIN(SELECT stc_id FROM rtjxodnd.stc002 WHERE base_dt >= %s) b"\
@@ -201,15 +201,16 @@ def main_process(input_dt = dt.now().strftime("%Y%m%d")):
     # cursor.execute(sql_select, (input_dt,input_dt,))
     selected_rows = Stc001.objects.all()
 
+    print(selected_rows.query)
     # 데이타 Fetch
-    for row in selected_rows:
-
-        try:
-            insert_daily_cls_price(row[0], input_dt)
-
-        except Exception as ex:
-            logger.error("ERROR!!!!: main_process")
-            logger.error(ex)
+    # for row in selected_rows:
+    #
+    #     try:
+    #         insert_daily_cls_price(row[0], input_dt)
+    #
+    #     except Exception as ex:
+    #         logger.error("ERROR!!!!: main_process")
+    #         logger.error(ex)
 
 
 if __name__ == "__main__":

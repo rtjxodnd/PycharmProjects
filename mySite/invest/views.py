@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from invest.forms import *
 from invest.bizLogic.get_basic_stock_info import main_process as getBasicInfo
+from invest.bizLogic.get_daily_stock_info import main_process as getDailyInfo
 
 
 def index(request):
@@ -14,6 +15,11 @@ def list(request):
 
 def insert_base_info(request):
     getBasicInfo('Y', 'Y')
+    return render(request, 'invest/result.html')
+
+
+def insert_daily_info(request):
+    getDailyInfo()
     return render(request, 'invest/result.html')
 
 
