@@ -19,7 +19,7 @@ def insert_base_info(request):
 
 
 def insert_daily_info(request):
-    getDailyInfo()
+    getDailyInfo('20100101')
     return render(request, 'invest/result.html')
 
 

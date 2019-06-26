@@ -106,7 +106,8 @@ def stock_values_insert_to_db(insert_value):
     tot_value = insert_value['totValue']
     pgm_id = "STC0001"
     try:
-        insert_data = Stc001.objects.get(stc_id=stc_id)
+        id = Stc001.objects.get(stc_id=stc_id).id
+        insert_data = Stc001.objects.get(id=id)
         insert_data.stc_name = stc_name
         insert_data.stc_dvsn = stc_dvsn
         insert_data.now_price = now_price
@@ -123,13 +124,6 @@ def stock_values_insert_to_db(insert_value):
                              face_price=face_price,
                              tot_value=tot_value,
                              pgm_id=pgm_id)
-        # insert_data.stc_id = stc_id
-        # insert_data.stc_name = stc_name
-        # insert_data.stc_dvsn = stc_dvsn
-        # insert_data.now_price = now_price
-        # insert_data.face_price = face_price
-        # insert_data.tot_value = tot_value
-        # insert_data.pgm_id = pgm_id
         insert_data.save()
         return
     except Exception as ex:
@@ -150,6 +144,8 @@ def main_process(kospi_yn="N", kosdaq_yn="N"):
     # 시간 check
     cur_time = time.strftime("%H%M%S")
     if cur_time < '090000':
+        logger.error("ERROR!!!!: main_process")
+        logger.error("09시 이전 처리 불가")
         raise myError.TimeCheckError
 
     # 기존 data삭제
@@ -159,7 +155,7 @@ def main_process(kospi_yn="N", kosdaq_yn="N"):
         # 코스피 전체 추출
         # 코스피(소속=0, 전체 페이지=31)
         sosok = 0
-        tot_pages = 2 + 1
+        tot_pages = 31 + 1
         for page in range(1, tot_pages):
             # 한페이지의 data 추출
             for stockOrder in range(0, 50):

@@ -110,26 +110,50 @@ def find_stock_values_of_one(stock_id, input_dt, tds):
         logger.error("ERROR!!!!: find_stock_values_of_one")
         logger.error(ex)
 
+
 # 입력된 dictionary 를 db insert
 def stock_values_insert_to_db(insert_value):
-    sql_insert = "insert into rtjxodnd.stc002 values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" \
-                 "ON DUPLICATE KEY UPDATE " \
-                 "mod_cls_price = %s, cls_price = %s, diff_price = %s, strt_price = %s, high_price = %s, low_price = %s, deal_qnt = %s, pgm_id = %s, ins_udp_time =  %s;"
+    # sql_insert = "insert into rtjxodnd.stc002 values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" \
+    #              "ON DUPLICATE KEY UPDATE " \
+    #              "mod_cls_price = %s, cls_price = %s, diff_price = %s, strt_price = %s, high_price = %s, low_price = %s, deal_qnt = %s, pgm_id = %s, ins_udp_time =  %s;"
+    base_dt = insert_value['baseDt']
+    stc_id = insert_value['stock_id']
+    mod_cls_price = 0
+    cls_price = insert_value['clsPrice']
+    diff_price = float(insert_value['sign']) * float(insert_value['diffPrice'])
+    strt_price = insert_value['strtPrice']
+    high_price = insert_value['highPrice']
+    low_price = insert_value['lowPrice']
+    deal_qnt = insert_value['dealQnt']
+    pgm_id = "STC0002"
 
     # data 별 DB insert
     try:
-        base_dt       = insert_value['baseDt']
-        stock_id      = insert_value['stock_id']
-        mod_cls_price = 0
-        cls_price     = insert_value['clsPrice']
-        diff_price    = float(insert_value['sign'])*float(insert_value['diffPrice'])
-        strt_price    = insert_value['strtPrice']
-        high_price    = insert_value['highPrice']
-        low_price     = insert_value['lowPrice']
-        deal_qnt      = insert_value['dealQnt']
-        pgm_id        = "STC0002"
-
-
+        id = Stc002.objects.get(stc_id=stc_id, base_dt=base_dt).id
+        insert_data = Stc002.objects.get(id=id)
+        insert_data.mod_cls_price = mod_cls_price
+        insert_data.cls_price = cls_price
+        insert_data.diff_price = diff_price
+        insert_data.strt_price = strt_price
+        insert_data.high_price = high_price
+        insert_data.low_price = low_price
+        insert_data.deal_qnt = deal_qnt
+        insert_data.pgm_id = pgm_id
+        insert_data.save()
+        return
+    except Stc002.DoesNotExist as de:
+        insert_data = Stc002(stc_id=stc_id,
+                             base_dt=base_dt,
+                             mod_cls_price=mod_cls_price,
+                             cls_price=cls_price,
+                             diff_price=diff_price,
+                             strt_price=strt_price,
+                             high_price=high_price,
+                             low_price=low_price,
+                             deal_qnt=deal_qnt,
+                             pgm_id=pgm_id)
+        insert_data.save()
+        return
     except Exception as ex:
         error_result_dict = { "base_dt": insert_value['baseDt']
                             , "companyCode": insert_value['stock_id']}
@@ -137,6 +161,7 @@ def stock_values_insert_to_db(insert_value):
         logger.error("ERROR!!!!: stock_values_insert_to_db")
         logger.error(error_result_dict)
         logger.error(ex)
+
 
 # 해당 종목의 마지막 page 추출
 def get_last_page_of_stock (stc_id, input_dt):
@@ -188,7 +213,9 @@ def insert_daily_cls_price(stc_id, input_dt):
 # Main 처리: 주식 기본 테이블에서 data 읽어서 이를 처리한다.
 ###########################################################
 def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
-    # 조회수행(입력된 일자보다 크거나 같으면서 Stc001에 종목정보가 있는 data)
+    # 조회수행
+    # 입력된 일자보다 크거나 같으면서 Stc001에 종목정보가 있는 data 중 일별정보가 없는 data
+    # 입력된 일자에 해당하는 data 수신
     sql_select = "SELECT a.stc_id FROM rtjxodnd.stc001 a "\
                  "  LEFT JOIN(SELECT stc_id FROM rtjxodnd.stc002 WHERE base_dt >= %s) b"\
                  " USING (stc_id)"\
@@ -197,21 +224,18 @@ def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
                  " SELECT a.stc_id FROM rtjxodnd.stc001 a " \
                  "  LEFT JOIN(select stc_id from rtjxodnd.stc002 where base_dt = %s) b"\
                  " USING(stc_id);"
-
-    # cursor.execute(sql_select, (input_dt,input_dt,))
+    Stc001.objects.raw(sql_select, input_dt, input_dt)
     selected_rows = Stc001.objects.all()
 
-    print(selected_rows.query)
     # 데이타 Fetch
-    # for row in selected_rows:
-    #
-    #     try:
-    #         insert_daily_cls_price(row[0], input_dt)
-    #
-    #     except Exception as ex:
-    #         logger.error("ERROR!!!!: main_process")
-    #         logger.error(ex)
+    for row in selected_rows:
+        try:
+            insert_daily_cls_price(row.stc_id, input_dt)
+
+        except Exception as ex:
+            logger.error("ERROR!!!!: main_process")
+            logger.error(ex)
 
 
 if __name__ == "__main__":
-    main_process('20190401')
+    main_process('20190625')
