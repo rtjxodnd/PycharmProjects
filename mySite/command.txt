@@ -16,6 +16,9 @@ python manage.py migrate
 workon
 workon my_django_environment
 
+# git pull
+git pull
+
 # 서버기동
 python3 manage.py runserver 49.247.132.89:80
 python3 manage.py runserver 0.0.0.0:80

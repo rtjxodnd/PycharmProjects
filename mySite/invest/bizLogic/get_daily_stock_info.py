@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 # 공통변수
 FINANCE_URL = "https://finance.naver.com/item/sise_day.nhn?code="
 
+# 결과건수 초기화
+g_insert_quantity_stock = 0
+g_insert_quantity_daily_info = 0
 
 # 한페이지의 data 추출
 # page: 웹 페이지 지정
@@ -42,7 +45,7 @@ def find_stock_values_of_one_page(stock_id, input_dt, page=1):
             last_order = last_order + 1
 
         # 필요 데이터 추출
-        for order in range(last_order,-1,-1):
+        for order in range(last_order, -1, -1):
             tr = trs[order]
             tds = tr.find_all("td")
             result_one_value = find_stock_values_of_one(stock_id, input_dt,tds)
@@ -113,9 +116,7 @@ def find_stock_values_of_one(stock_id, input_dt, tds):
 
 # 입력된 dictionary 를 db insert
 def stock_values_insert_to_db(insert_value):
-    # sql_insert = "insert into rtjxodnd.stc002 values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" \
-    #              "ON DUPLICATE KEY UPDATE " \
-    #              "mod_cls_price = %s, cls_price = %s, diff_price = %s, strt_price = %s, high_price = %s, low_price = %s, deal_qnt = %s, pgm_id = %s, ins_udp_time =  %s;"
+    # 입력정보 parsing
     base_dt = insert_value['baseDt']
     stc_id = insert_value['stock_id']
     mod_cls_price = 0
@@ -153,10 +154,11 @@ def stock_values_insert_to_db(insert_value):
                              deal_qnt=deal_qnt,
                              pgm_id=pgm_id)
         insert_data.save()
+        g_insert_quantity_daily_info += 1
         return
     except Exception as ex:
-        error_result_dict = { "base_dt": insert_value['baseDt']
-                            , "companyCode": insert_value['stock_id']}
+        error_result_dict = { "base_dt": insert_value['baseDt'],
+                              "companyCode": insert_value['stock_id']}
 
         logger.error("ERROR!!!!: stock_values_insert_to_db")
         logger.error(error_result_dict)
@@ -205,7 +207,7 @@ def get_last_page_of_stock (stc_id, input_dt):
 
 # 한개 종목에 대한 전체처리
 def insert_daily_cls_price(stc_id, input_dt):
-    for page in range(get_last_page_of_stock (stc_id, input_dt),0,-1):
+    for page in range(get_last_page_of_stock(stc_id, input_dt), 0, -1):
         find_stock_values_of_one_page(stc_id, input_dt, page)
 
 
@@ -213,6 +215,7 @@ def insert_daily_cls_price(stc_id, input_dt):
 # Main 처리: 주식 기본 테이블에서 data 읽어서 이를 처리한다.
 ###########################################################
 def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
+
     # 조회수행
     # 입력된 일자보다 크거나 같으면서 Stc001에 종목정보가 있는 data 중 일별정보가 없는 data
     # 입력된 일자에 해당하는 data 수신
@@ -235,6 +238,8 @@ def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
         except Exception as ex:
             logger.error("ERROR!!!!: main_process")
             logger.error(ex)
+
+    return {'insert_quantity_stock': g_insert_quantity_stock}
 
 
 if __name__ == "__main__":

@@ -142,15 +142,17 @@ def stock_values_insert_to_db(insert_value):
 def main_process(kospi_yn="N", kosdaq_yn="N"):
 
     # 시간 check
-    cur_time = time.strftime("%H%M%S")
-    if cur_time < '090000':
-        logger.error("ERROR!!!!: main_process")
-        logger.error("09시 이전 처리 불가")
-        raise myError.TimeCheckError
+    # cur_time = time.strftime("%H%M%S")
+    # if cur_time < '090000':
+    #     logger.error("ERROR!!!!: main_process")
+    #     logger.error("09시 이전 처리 불가")
+    #     raise myError.TimeCheckError
 
-    # 기존 data삭제
-    # stock_values_delete(kospi_yn, kosdaq_yn)
+    # 결과건수 초기화
+    insert_quantity_kospi = 0
+    insert_quantity_kosdaq = 0
 
+    # 코스피자료 수신
     if kospi_yn == "Y":
         # 코스피 전체 추출
         # 코스피(소속=0, 전체 페이지=31)
@@ -162,7 +164,10 @@ def main_process(kospi_yn="N", kosdaq_yn="N"):
                 if find_one_stock_values(sosok, page, stockOrder)['endOfData'] == 'Y':
                     logger.error("kospi data 끝")
                     break
+                else:
+                    insert_quantity_kospi += 1
 
+    # 코스닥 자료 수신
     if kosdaq_yn == "Y":
         # 코스닥 전체 추출
         # 코스닥(소속=1, 전체 페이지=27)
@@ -174,6 +179,11 @@ def main_process(kospi_yn="N", kosdaq_yn="N"):
                 if find_one_stock_values(sosok, page, stockOrder)['endOfData'] == 'Y':
                     logger.error("kosdaq data 끝")
                     break
+                else:
+                    insert_quantity_kosdaq += 1
+
+    return {'insert_quantity_kospi': insert_quantity_kospi,
+            "insert_quantity_kosdaq": insert_quantity_kosdaq}
 
 
 if __name__ == "__main__":
