@@ -13,9 +13,17 @@ def list(request):
     return render(request, 'invest/list.html', {'stockList': stockList})
 
 
+def get_base_info(request):
+    return render(request, 'invest/get_base_info.html')
+
+
 def insert_base_info(request):
     insert_quantity = getBasicInfo('N', 'N')
     return render(request, 'invest/result_base_info.html', {'insert_quantity': insert_quantity})
+
+
+def get_daily_info(request):
+    return render(request, 'invest/get_daily_info.html')
 
 
 def insert_daily_info(request):

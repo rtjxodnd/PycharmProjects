@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>주식기본정보 수집</title>
+</head>
+<body>
+<!--    <ul>-->
+<!--        <li><a href="/invest/insert-base-info/">종목 기본정보 수신처리</a></li>-->
+<!--    </ul>-->
+
+
+
+
+    <h1>주식기본정보 수집</h1>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="{% url 'invest:insert_base_info' %}" method="post">
+        {% csrf_token %}
+            <input type="checkbox" name="kospi" id="kospiYn" value="Y" />
+            <label>코스피</label><br />
+        <input type="submit" value="수신!!" />
+    </form>
+</body>
+</html>
