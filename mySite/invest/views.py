@@ -18,7 +18,7 @@ def get_base_info(request):
 
 
 def insert_base_info(request):
-    insert_quantity = getBasicInfo('N', 'N')
+    insert_quantity = getBasicInfo(request.POST.get("kospi_yn"), request.POST.get("kosdaq_yn"))
     return render(request, 'invest/result_base_info.html', {'insert_quantity': insert_quantity})
 
 
@@ -27,7 +27,7 @@ def get_daily_info(request):
 
 
 def insert_daily_info(request):
-    insert_quantity = getDailyInfo('20190625')
+    insert_quantity = getDailyInfo(request.POST.get("input_dt"))
     return render(request, 'invest/result_daily_info.html', {'insert_quantity': insert_quantity})
 
 

@@ -5,8 +5,17 @@
     <title>주식일별정보 수집</title>
 </head>
 <body>
-    <ul>
-        <li><a href="/invest/insert-daily-info/">종목 일별정보 수신처리</a></li>
-    </ul>
+    <h1>주식일별정보 수집</h1>
+
+    <form action="{% url 'invest:insertDailyInfo' %}" method="post">
+        {% csrf_token %}
+        <input type="date" id="input_dt" name="input_dt" />이후의 데이타 수신
+        <br />
+        <input type="submit" value="수신!!" />
+    </form>
+
+    <script>
+        document.getElementById('input_dt').value = new Date().toISOString().substring(0, 10);;
+    </script>
 </body>
 </html>
