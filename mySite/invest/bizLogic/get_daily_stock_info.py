@@ -23,7 +23,7 @@ FINANCE_URL = "https://finance.naver.com/item/sise_day.nhn?code="
 
 # 결과건수 초기화
 g_insert_quantity_stock = 0
-g_insert_quantity_daily_info = 0
+
 
 # 한페이지의 data 추출
 # page: 웹 페이지 지정
@@ -154,7 +154,6 @@ def stock_values_insert_to_db(insert_value):
                              deal_qnt=deal_qnt,
                              pgm_id=pgm_id)
         insert_data.save()
-        g_insert_quantity_daily_info += 1
         return
     except Exception as ex:
         error_result_dict = { "base_dt": insert_value['baseDt'],
