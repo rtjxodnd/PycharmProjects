@@ -15,8 +15,6 @@ from invest.models import Stc001
 import requests
 from bs4 import BeautifulSoup
 import logging
-import time
-from invest.bizLogic import myError
 
 # 로거
 logger = logging.getLogger(__name__)
