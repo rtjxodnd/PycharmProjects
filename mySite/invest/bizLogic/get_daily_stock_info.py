@@ -165,11 +165,11 @@ def stock_values_insert_to_db(insert_value):
 
 
 # 해당 종목의 마지막 page 추출
-def get_last_page_of_stock (stc_id, input_dt):
+def get_last_page_of_stock(stc_id, input_dt):
     url = FINANCE_URL+stc_id
     page_call_result = requests.get(url)
     bs_obj = BeautifulSoup(page_call_result.content, "html.parser")
-    td_pg_rr = bs_obj.find("td",{"class": "pgRR"})
+    td_pg_rr = bs_obj.find("td", {"class": "pgRR"})
 
     # 마지막 페이지가 가리키는 위치 확인
     # 마지막 페이지 링크버튼 없다면 해당 종목은 1개의 페이지만 존재한다.
@@ -179,9 +179,37 @@ def get_last_page_of_stock (stc_id, input_dt):
         href = td_pg_rr.find("a")["href"]
         last_page = int(href.split("=")[2])
 
+    # last page 의 첫 행의 날짜를 확인 한다.
+    url = url + "&page=" + str(last_page + 1)
+    page_call_result = requests.get(url)
+    bs_obj = BeautifulSoup(page_call_result.content, "html.parser")
+    day_tds = bs_obj.find_all("td", {"align": "center"})
+    day_of_last_page = day_tds[0].find("span", {"class": "tah p10 gray03"}).text.replace(".", "")
+
+    # last page 의 첫 행의 날짜로 부터 입력된 날짜의 page 를 추정한다.
+    # last page 의 첫 행의 날짜와 입력일의 차를 구하고
+    diff_of_days = (dt.datetime.strptime(day_of_last_page, '%Y%m%d').date()
+                    - dt.datetime.strptime(input_dt, '%Y%m%d').date()).days
+
+    # 입력일이 작거나 같으면 입력일은 마지막 페이지에 있다.
+    if diff_of_days >= 0:
+        return last_page
+
+    # 그렇지 않다면 page당 10영업일이므로 두 날짜의 차에서 (5/7)의 차이에서 10을 나누고 마지막 페이지에서 빼 준다.
+    # 안전한 계산을 위해서 결과 값에서 20를 더 빼 준다.
+    # 만일 이 값이 0보다 작으면 0 처리 한다.
+    else:
+        # page간 차이
+        diff_of_pages = -diff_of_days*(5/7)/10 - 20
+
+        # 추정된 마지막 페이지
+        assumed_last_page = last_page - diff_of_pages
+        if assumed_last_page < 0:
+            assumed_last_page = 0
+
     # 입력된 일자가 어떤 페이지에 포함되는지 확인한다.
     set_yn = "N"
-    for page in range(0, last_page):
+    for page in range(round(assumed_last_page), last_page):
         url = url+"&page="+str(page + 1)
         page_call_result = requests.get(url)
         bs_obj = BeautifulSoup(page_call_result.content, "html.parser")
@@ -198,15 +226,17 @@ def get_last_page_of_stock (stc_id, input_dt):
             break
 
     # 대략 2010초 언저리: 225 page, 2010년 이후 데이터만 저장
-    if last_page > 225:
-        last_page = 225
+    # if last_page > 225:
+    #     last_page = 225
 
     return last_page
 
 
 # 한개 종목에 대한 전체처리
 def insert_daily_cls_price(stc_id, input_dt):
-    for page in range(get_last_page_of_stock(stc_id, input_dt), 0, -1):
+    # 마지막 페이지 구하고 0페이지부터 마지막 페이지 까지 데이터 수집
+    last_page = get_last_page_of_stock(stc_id, input_dt)
+    for page in range(last_page, 0, -1):
         find_stock_values_of_one_page(stc_id, input_dt, page)
 
 
@@ -218,16 +248,15 @@ def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
     # 조회수행
     # 입력된 일자보다 크거나 같으면서 Stc001에 종목정보가 있는 data 중 일별정보가 없는 data
     # 입력된 일자에 해당하는 data 수신
-    sql_select = "SELECT a.stc_id FROM rtjxodnd.stc001 a "\
-                 "  LEFT JOIN(SELECT stc_id FROM rtjxodnd.stc002 WHERE base_dt >= %s) b"\
+    sql_select = "SELECT a.id, a.stc_id FROM rtjxodnd.invest_stc001 a "\
+                 "  LEFT JOIN(SELECT stc_id FROM rtjxodnd.invest_stc002 WHERE base_dt >= %s) b"\
                  " USING (stc_id)"\
                  " WHERE b.stc_id IS NULL"\
                  " UNION" \
-                 " SELECT a.stc_id FROM rtjxodnd.stc001 a " \
-                 "  LEFT JOIN(select stc_id from rtjxodnd.stc002 where base_dt = %s) b"\
+                 " SELECT a.id, a.stc_id FROM rtjxodnd.invest_stc001 a " \
+                 "  LEFT JOIN(select stc_id from rtjxodnd.invest_stc002 where base_dt = %s) b"\
                  " USING(stc_id);"
-    Stc001.objects.raw(sql_select, input_dt, input_dt)
-    selected_rows = Stc001.objects.all()
+    selected_rows = Stc001.objects.raw(sql_select % (input_dt, input_dt))
 
     # 데이타 Fetch
     for row in selected_rows:
