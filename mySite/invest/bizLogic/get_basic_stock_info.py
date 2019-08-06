@@ -168,9 +168,9 @@ def main_process(kospi_yn="N", kosdaq_yn="N"):
     # 코스닥 자료 수신
     if kosdaq_yn == "Y":
         # 코스닥 전체 추출
-        # 코스닥(소속=1, 전체 페이지=27)
+        # 코스닥(소속=1, 전체 페이지=28)
         sosok = 1
-        tot_pages = 27 + 1
+        tot_pages = 28 + 1
         for page in range(1, tot_pages):
             # 한페이지의 data 추출
             for stockOrder in range(0, 50):

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>list</title>
+</head>
+<body>
+    <ul>
+        <li>종목명 | 현재가 | 시총 | PER | ROA | 순위</li>
+        {% for stock in stockList %}
+            <li>
+            <a href="/invest/view/{{ stock.stc_id }}"> {{ stock.stc_name }}</a> |
+                {{ stock.now_price }} |{{ stock.tot_value }} | {{ stock.per }} | {{ stock.roa }}| {{ stock.final_order }}
+            </li>
+        {% endfor %}
+        <br>
+    </ul>
+
+</body>
+</html>

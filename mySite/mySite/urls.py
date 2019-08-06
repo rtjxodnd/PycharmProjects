@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('community/', include('community.urls')),
     path('invest/', include('invest.urls')),
+    path('stock-choice/', include('stockChoice.urls')),
     path('polls/', include('polls.urls')),
 ]
 

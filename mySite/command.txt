@@ -21,3 +21,9 @@ git pull
 
 # 서버기동
 python3 manage.py runserver 0.0.0.0:80
+
+# 세션유지, 터미널 종료
+ctrl + z
+bg (안된다면 bg[번호])
+disown
+exit

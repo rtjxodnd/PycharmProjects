@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>주식 일별투자지표 정보 수집</title>
+</head>
+<body>
+    <h1>주식 일별투자지표 정보 수집</h1>
+
+    <form action="{% url 'invest:insertDailyInvestmentIndicatorInfo' %}" method="post">
+        {% csrf_token %}
+        당일 주식 일별투자지표 정보 데이타 수신<br />
+        <input type="submit" value="수신!!" />
+    </form>
+</body>
+</html>

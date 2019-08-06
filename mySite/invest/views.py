@@ -2,6 +2,7 @@ from django.shortcuts import render
 from invest.forms import *
 from invest.bizLogic.get_basic_stock_info import main_process as getBasicInfo
 from invest.bizLogic.get_daily_stock_info import main_process as getDailyInfo
+from invest.bizLogic.get_daily_investment_indicator_info import main_process as getDailyInvestmentIndicatorInfo
 
 
 def index(request):
@@ -26,9 +27,18 @@ def get_daily_info(request):
     return render(request, 'invest/get_daily_info.html')
 
 
+def get_daily_investment_indicator_info(request):
+    return render(request, 'invest/get_daily_investment_indicator_info.html')
+
+
 def insert_daily_info(request):
     insert_quantity = getDailyInfo(request.POST.get("input_dt").replace('-', ''))
     return render(request, 'invest/result_daily_info.html', {'insert_quantity': insert_quantity})
+
+
+def insert_daily_investment_indicator_info(request):
+    insert_quantity = getDailyInvestmentIndicatorInfo()
+    return render(request, 'invest/result_daily_investment_indicator_info.html', {'insert_quantity': insert_quantity})
 
 
 def delete_base_info(request, stc_id, stc_name, stc_dvsn, now_price, face_price, tot_value, pgm_id):
