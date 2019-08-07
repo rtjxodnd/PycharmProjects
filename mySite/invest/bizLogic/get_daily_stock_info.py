@@ -253,7 +253,7 @@ def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
                  " USING (stc_id)"\
                  " WHERE b.stc_id IS NULL"\
                  " AND a.id > '777'"\
-                 " UNION" \
+                 " UNION"  \
                  " SELECT a.id, a.stc_id FROM rtjxodnd.invest_stc001 a " \
                  "  LEFT JOIN(select stc_id from rtjxodnd.invest_stc002 where base_dt = %s) b"\
                  " USING(stc_id)" \
