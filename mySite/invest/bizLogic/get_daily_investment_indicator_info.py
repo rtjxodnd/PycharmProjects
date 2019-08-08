@@ -12,7 +12,8 @@ import datetime as dt
 from bs4 import BeautifulSoup
 import logging
 from selenium import webdriver
-chromeDriverPath = "chromedriver/chromedriver.exe"
+from config import config
+chromeDriverPath = config.chromeDriverPath()
 
 # 로거
 logger = logging.getLogger(__name__)

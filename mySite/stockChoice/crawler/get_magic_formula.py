@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-chromeDriverPath = "chromedriver/chromedriver.exe"
+from config import config
+chromeDriverPath = config.chromeDriverPath()
 
 
 # 개별 종목 정보에서 상세 값을 크롤링
