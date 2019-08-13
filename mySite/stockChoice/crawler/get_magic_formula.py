@@ -103,8 +103,7 @@ def sortingListComplexValue(dataGroupList):
 # page driver 설정
 ###########################################################
 def set_page_driver(sosok):
-    # driver = webdriver.Chrome(chromeDriverPath)
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(chromeDriverPath)
     url = "https://finance.naver.com/sise/sise_market_sum.nhn?sosok="+sosok
     driver.get(url)
     click_option1 = driver.find_element_by_xpath("//*[@id='option12']")
