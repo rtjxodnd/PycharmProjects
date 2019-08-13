@@ -104,6 +104,7 @@ def stock_values_insert_to_db(insert_value):
 ###########################################################
 def set_page_driver(sosok):
     driver = webdriver.Chrome(chromeDriverPath)
+    driver = webdriver.Chrome()
     url = "https://finance.naver.com/sise/sise_market_sum.nhn?sosok="+sosok
     driver.get(url)
     click_option1 = driver.find_element_by_xpath("//*[@id='option1']")
