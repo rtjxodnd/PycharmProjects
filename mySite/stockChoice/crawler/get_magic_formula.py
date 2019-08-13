@@ -2,6 +2,10 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from config import config
 chromeDriverPath = config.chromeDriverPath()
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-no-shm-usage')
 
 
 # 개별 종목 정보에서 상세 값을 크롤링
@@ -103,7 +107,7 @@ def sortingListComplexValue(dataGroupList):
 # page driver 설정
 ###########################################################
 def set_page_driver(sosok):
-    driver = webdriver.Chrome(chromeDriverPath)
+    driver = webdriver.Chrome(chromeDriverPath, chrome_options=chrome_options)
     url = "https://finance.naver.com/sise/sise_market_sum.nhn?sosok="+sosok
     driver.get(url)
     click_option1 = driver.find_element_by_xpath("//*[@id='option12']")

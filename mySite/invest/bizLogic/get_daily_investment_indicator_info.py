@@ -14,6 +14,10 @@ import logging
 from selenium import webdriver
 from config import config
 chromeDriverPath = config.chromeDriverPath()
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-no-shm-usage')
 
 # 로거
 logger = logging.getLogger(__name__)
@@ -103,7 +107,7 @@ def stock_values_insert_to_db(insert_value):
 # page driver 설정
 ###########################################################
 def set_page_driver(sosok):
-    driver = webdriver.Chrome(chromeDriverPath)
+    driver = webdriver.Chrome(chromeDriverPath, chrome_options=chrome_options)
     url = "https://finance.naver.com/sise/sise_market_sum.nhn?sosok="+sosok
     driver.get(url)
     click_option1 = driver.find_element_by_xpath("//*[@id='option1']")
