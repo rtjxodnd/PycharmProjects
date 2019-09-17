@@ -53,7 +53,7 @@ def find_one_stock_values(sosok=0, page=1, stockOrder=0):
                        "stcDvsn": stc_dvsn,
                        "nowPrice": tds[2].text.replace(",", ""),    #현재가
                        "facePrice": tds[5].text.replace(",", ""),  #액면가
-                       "totValue": float(tds[6].text.replace(",", "")) * 1000000000}  # 시가총액
+                       "totValue": float(tds[6].text.replace(",", "")) * 100000000}  # 시가총액
 
         # db 입력
         stock_values_insert_to_db(result_value)

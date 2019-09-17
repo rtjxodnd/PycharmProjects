@@ -252,12 +252,12 @@ def main_process(input_dt=dt.datetime.today().strftime("%Y%m%d")):
                  "  LEFT JOIN(SELECT stc_id FROM rtjxodnd.invest_stc002 WHERE base_dt >= %s) b"\
                  " USING (stc_id)"\
                  " WHERE b.stc_id IS NULL"\
-                 " AND a.id > '779'"\
+                 " AND a.id > '1544'"\
                  " UNION"  \
                  " SELECT a.id, a.stc_id FROM rtjxodnd.invest_stc001 a " \
                  "  LEFT JOIN(select stc_id from rtjxodnd.invest_stc002 where base_dt = %s) b"\
                  " USING(stc_id)" \
-                 " where a.id > '779';"
+                 " where a.id > '1544';"
     selected_rows = Stc001.objects.raw(sql_select % (input_dt, input_dt))
 
     # 데이타 Fetch
