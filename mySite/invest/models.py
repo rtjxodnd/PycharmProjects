@@ -10,6 +10,7 @@ class Stc001(models.Model):
     now_price = models.BigIntegerField(default=0)
     face_price = models.BigIntegerField(default=0)
     tot_value = models.BigIntegerField(default=0)
+    deal_amt = models.BigIntegerField(default=0)
     pgm_id = models.CharField(max_length=10)
     cdate = models.DateTimeField(auto_now=True)
 

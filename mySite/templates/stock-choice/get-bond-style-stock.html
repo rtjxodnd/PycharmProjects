@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>채권형 주식정보 수집</title>
+</head>
+<body>
+    <h1>채권형 주식정보 수집</h1>
+
+    <form action="{% url 'stockChoice:resultBondStyleStock' %}" method="post">
+        {% csrf_token %}
+        목표수익률: <input type="text" id="profit" name="profit" value=15 />%
+        <br />
+        <input type="submit" value="수신!!" />
+    </form>
+</body>
+</html>

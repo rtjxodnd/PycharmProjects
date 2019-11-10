@@ -53,7 +53,8 @@ def find_one_stock_values(sosok=0, page=1, stockOrder=0):
                        "stcDvsn": stc_dvsn,
                        "nowPrice": tds[2].text.replace(",", ""),    #현재가
                        "facePrice": tds[5].text.replace(",", ""),  #액면가
-                       "totValue": float(tds[6].text.replace(",", "")) * 100000000}  # 시가총액
+                       "totValue": float(tds[6].text.replace(",", "")) * 100000000, #시가총액
+                       "dealAmt": float(tds[9].text.replace(",", "")) * float(tds[2].text.replace(",", ""))} #거래금액
 
         # db 입력
         stock_values_insert_to_db(result_value)
@@ -102,6 +103,7 @@ def stock_values_insert_to_db(insert_value):
     now_price = insert_value['nowPrice']
     face_price = insert_value['facePrice']
     tot_value = insert_value['totValue']
+    deal_amt = insert_value['dealAmt']
     pgm_id = "STC0001"
     try:
         id = Stc001.objects.get(stc_id=stc_id).id
@@ -111,6 +113,7 @@ def stock_values_insert_to_db(insert_value):
         insert_data.now_price = now_price
         insert_data.face_price = face_price
         insert_data.tot_value = tot_value
+        insert_data.deal_amt = deal_amt
         insert_data.pgm_id = pgm_id
         insert_data.save()
         return
@@ -121,6 +124,7 @@ def stock_values_insert_to_db(insert_value):
                              now_price=now_price,
                              face_price=face_price,
                              tot_value=tot_value,
+                             deal_amt=deal_amt,
                              pgm_id=pgm_id)
         insert_data.save()
         return
