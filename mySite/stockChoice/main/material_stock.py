@@ -57,7 +57,7 @@ def main_process(goal_profit = 15):
     last_digit = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     stockList = Stc001.objects.filter(face_price__gt=0, tot_value__lte=70000000000, tot_value__gte=25000000000)
     # stockList = Stc001.objects.filter(face_price__gt=0)
-    # stockList = Stc001.objects.filter(face_price__gt=0, stc_id='173130') #28513K, 317770
+    # stockList = Stc001.objects.filter(face_price__gt=0, stc_id='005930') #28513K, 317770
     # stockList = Stc001.objects.filter(face_price__gt=0, id__lt=10)
 
     # 전체 종목 대상

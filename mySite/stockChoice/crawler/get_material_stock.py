@@ -13,7 +13,7 @@ def find_one_stock_values(stc_id):
     asideInfo = bs_obj.find("div", {"id": "aside"}).find("div", {"class": "aside_invest_info"}).find("div", {"id": "tab_con1"})
 
     # 투자의견정보
-    opinion = asideInfo.find_all("div")[6].find("table", {"summary": "투자의견 정보", "class": "rwidth"})
+    opinion = asideInfo.find_all("div")[4].find("table", {"summary": "투자의견 정보", "class": "rwidth"})
 
     # 분석 table
     analysis = bs_obj.find("div", {"class": "section cop_analysis"}).find("div", {"class": "sub_section"}).find("tbody").find_all("tr")
