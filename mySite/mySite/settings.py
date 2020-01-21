@@ -87,11 +87,21 @@ DATABASES = {
         'NAME': 'rtjxodnd',
         'USER': 'rtjxodnd',
         'PASSWORD': 'mysql7043',
-        'HOST': 'rtjxodnd.db.iwinv.net',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
         'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
         }
+    # 'default': {
+    #      'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
+    #      'NAME': 'rtjxodnd',
+    #      'USER': 'rtjxodnd',
+    #      'PASSWORD': 'mysql7043',
+    #      'HOST': 'rtjxodnd.db.iwinv.net',
+    #      'PORT': '3306',
+    #      'OPTIONS': {
+    #          'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
+    #      }
     }
 }
 
